@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <p>
+      <input id="clickMe" type="button" value="Start Flipping!" onclick="toggleFunction();"/>
+    </p>
+    <p>
+      <div id="timer">00:00:00</div>
+      <div id="result"></div>
+      <div id="inarow"></div>
+      <div id="probability"></div>
+      <div id="longestStreak"></div>
+      <div id="lowestProbability"></div>
+    </p>
+
+    <script>
+        let lastResult = "";
+        let currentStreak = 0;
+        let currentProbability = 0.5;
+        let longestStreak = 0;
+        let lowestProbabilityHit = 0.5;
+        let intervalId = null;
+        let stopwatchInterval = null;
+        let startTime;
+        let elapsedPausedTime = 0;
+    
+        function startStopwatch() {
+          if (!stopwatchInterval) {
+            startTime = new Date().getTime() - elapsedPausedTime;
+            stopwatchInterval = setInterval(updateStopwatch, 1000);
+          } else {
+            clearInterval(stopwatchInterval);
+          }
+        }
+    
+        function updateStopwatch() {
+          const currentTime = new Date().getTime();
+          const elapsedTime = currentTime - startTime;
+          const seconds = Math.floor(elapsedTime / 1000) % 60;
+          const minutes = Math.floor(elapsedTime / 1000 / 60) % 60;
+          const hours = Math.floor(elapsedTime / 1000 / 60 / 60);
+          const displayTime = pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
+          document.getElementById("timer").innerHTML = displayTime;
+        }
+    
+        function pad(num) {
+          return num.toString().padStart(2, '0');
+        }
+    
+        function doFunction() {
+          const random = Math.random();
+          let result = "";
+          if (random > 0.5) {
+            result = "Heads";
+          } else {
+            result = "Tails";
+          }
+    
+          if (result === lastResult) {
+            currentStreak += 1;
+          } else {
+            currentStreak = 1;
+            currentProbability = 0.5;
+          }
+    
+          currentProbability = Math.pow(0.5, currentStreak);
+          if (currentProbability < lowestProbabilityHit) lowestProbabilityHit = currentProbability;
+          if (currentStreak > longestStreak) longestStreak = currentStreak;
+          lastResult = result;
+    
+          document.getElementById("result").innerHTML = result;
+          document.getElementById("inarow").innerHTML = "In a row: " + currentStreak;
+          document.getElementById("probability").innerHTML = "Probability of Streak: " + currentProbability;
+          document.getElementById("longestStreak").innerHTML = "Longest Streak: " + longestStreak;
+          document.getElementById("lowestProbability").innerHTML = "Probability of Longest Streak: " + lowestProbabilityHit;
+        }
+    
+        function toggleFunction() {
+          startStopwatch();
+          if (intervalId) {
+            clearInterval(intervalId);
+            intervalId = null;
+            stopwatchInterval = null;
+          } else {
+            intervalId = setInterval(doFunction, 10); // Adjust the interval time as needed
+          }
+        }
+      </script>
+</body>
+</html>
