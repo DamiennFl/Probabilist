@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <head>Gambler's Ruin Coin Toss</head>
+  <h5>Here is a coin toss, where each heads means you gain a dollar, and each tails means you lose.<br/>
+      In theory, the probability of you hitting your target is 0.5, while going broke is also 0.5.
+  </h5>
+    <p>
+      <input id="startingBal" type="number" placeholder="Enter starting balance"/>
+      <input id="endingBal" type="number" placeholder="Enter target balance"/>
+      <input id="clickMe" type="button" value="Start Flipping!" onclick="toggleFunction();"/>
+    </p>
+    <p>
+      <div id="balance">Current Balance: </div>
+      <div id="targetBalance">Target Balance: </div>
+      <div id="probabilityOfSuccess">Probability of success: </div>
+      <div id="result">Result: </div>
+      <div id="totalCF">Total Flips: </div>
+      <div id="timer">Time Running: </div>
+      <div id="broke"></div>
+    </p>
+
+    <script>
+        let lastResult = "";
+        let intervalId = null;
+        let stopwatchInterval = null;
+        let startTime;
+        let elapsedPausedTime = 0;
+        let startingbalance = "";
+        let currentBalance = "";
+        let totalCoinFlips = 0;
+        let endingBalance = "";
+        let probabilityOS = "";
+    
+        function startStopwatch() {
+          if (!stopwatchInterval) {
+            startTime = new Date().getTime() - elapsedPausedTime;
+            stopwatchInterval = setInterval(updateStopwatch, 1000);
+          } else {
+            clearInterval(stopwatchInterval);
+          }
+        }
+    
+        function updateStopwatch() {
+          const currentTime = new Date().getTime();
+          const elapsedTime = currentTime - startTime;
+          const seconds = Math.floor(elapsedTime / 1000) % 60;
+          const minutes = Math.floor(elapsedTime / 1000 / 60) % 60;
+          const hours = Math.floor(elapsedTime / 1000 / 60 / 60);
+          const displayTime = pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
+          document.getElementById("timer").innerHTML = "Time Running: " + displayTime;
+        }
+    
+        function pad(num) {
+          return num.toString().padStart(2, '0');
+        }
+    
+        function doFunction() {
+          const random = Math.random();
+          let result = "";
+          if (random > 0.5) {
+            result = "Heads";
+            currentBalance += 1;
+            totalCoinFlips += 1;
+          } else {
+            result = "Tails";
+            currentBalance -= 1;
+            totalCoinFlips += 1;
+          }
+
+          lastResult = result;
+
+          probabilityOS = currentBalance / endingBalance;
+
+          if(currentBalance == 0) {
+            toggleFunction();
+            document.getElementById("broke").innerHTML = "You went broke!";
+          } else if(currentBalance == endingBalance) {
+            document.getElementById("broke").innerHTML = "You hit your target in " + totalCoinFlips + "flips!";
+            toggleFunction();
+          } else {
+            document.getElementById("broke").innerHTML = "";
+            document.getElementById("result").innerHTML = "Result: " + result;
+            document.getElementById("balance").innerHTML = "Current Balance: " + currentBalance;
+            document.getElementById("totalCF").innerHTML = "Total Flips: " + totalCoinFlips;
+            document.getElementById("probabilityOfSuccess").innerHTML = "Probability of success: " + probabilityOS;
+          }
+        }
+    
+        function toggleFunction() {
+          startStopwatch();
+          const balanceInput = document.getElementById("startingBal").value;
+          const targetBalance = document.getElementById("endingBal").value;
+          totalCoinFlips = 0;
+          if (balanceInput !== "") {
+                startingBalance = parseInt(balanceInput, 10);
+                currentBalance = startingBalance;
+                document.getElementById("balance").innerHTML = "Current Balance: " + currentBalance;
+          }
+          if(targetBalance !== "") {
+                endingBalance = parseInt(targetBalance, 10);
+                document.getElementById("targetBalance").innerHTML = "Target Balance: " + endingBalance;
+                document.getElementById("probabilityOfSuccess").innerHTML = "Probability of success: " + balanceInput / targetBalance;
+          }
+          if (intervalId) {
+            clearInterval(intervalId);
+            intervalId = null;
+            stopwatchInterval = null;
+          } else {
+            intervalId = setInterval(doFunction, 1);
+          }
+        }
+      </script>
+</body>
+</html>
