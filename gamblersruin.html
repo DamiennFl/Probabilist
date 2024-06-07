@@ -3,7 +3,7 @@
 <body>
   <head>Gambler's Ruin Coin Toss</head>
   <h5>Here is a coin toss, where each heads means you gain a dollar, and each tails means you lose.<br/>
-      In theory, the probability of you hitting your target is 0.5, while going broke is also 0.5.
+      You can also see your probability to win based on your starting value and target balance.
   </h5>
     <p>
       <input id="startingBal" type="number" placeholder="Enter starting balance"/>
@@ -76,7 +76,7 @@
             toggleFunction();
             document.getElementById("broke").innerHTML = "You went broke!";
           } else if(currentBalance == endingBalance) {
-            document.getElementById("broke").innerHTML = "You hit your target in " + totalCoinFlips + "flips!";
+            document.getElementById("broke").innerHTML = "You hit your target in " + totalCoinFlips + " flips!";
             toggleFunction();
           } else {
             document.getElementById("broke").innerHTML = "";
